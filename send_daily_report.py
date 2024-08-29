@@ -1,8 +1,8 @@
 import requests
 
-from config import TOKEN
+from config import TOKEN, message_recipient
 from pprint import pprint
-from get_daily_report import get_daily_pnl, get_positions_count
+from get_daily_report import get_total_pnl, get_positions_count
 
 BASE_URL = f"https://api.telegram.org/bot{TOKEN}/"
 
@@ -11,12 +11,13 @@ METHOD_NAME = {
     'sendMessage': 'sendMessage'
 }
 
-daily_pnl = get_daily_pnl()
-positions_per_day = get_positions_count()
+days = 0
+total_pnl = get_total_pnl(days)
+number_of_positions = get_positions_count(days)
 
 url = f"{BASE_URL}{METHOD_NAME['sendMessage']}"
 data = {
-    'chat_id': 586622534,
-    'text': f"{daily_pnl=}\n{positions_per_day=}"
+    'chat_id': message_recipient['monster'],
+    'text': f"{total_pnl=}\n{number_of_positions=}"
 }
 response = requests.post(url, data)

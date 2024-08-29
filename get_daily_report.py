@@ -32,9 +32,9 @@ def get_history_positions(page_num: int, page_size=None, symbol=None) -> list:
         'page_num': page_num
     }
     if page_size:
-        data_original = {"page_size": page_size}
+        data_original["page_size"] = page_size
     if symbol:
-        data_original = {"symbol": symbol}
+        data_original["symbol"] = symbol
     data = '&'.join('{}={}'.format(i, data_original[i]) for i in sorted(data_original))
     sign = _sign_v1(sign_params=data)
     headers = {
@@ -75,17 +75,20 @@ def get_positions_per_day(days) -> list:
                 second=59,
                 microsecond=999999).timestamp()) * 1000 - 86400000
 
-    all_positions = get_history_positions(page_num=1, page_size=500)
     positions_in_report = []
-
-    for position in all_positions:
-        if position['updateTime'] >= timestamp_start_day and position['updateTime'] <= timestamp_end_day:
-            positions_in_report.append(position)
+    page_num = 1
+    all_positions = get_history_positions(page_num=page_num, page_size=500)
+    while all_positions:
+        for position in all_positions:
+            if position['updateTime'] >= timestamp_start_day and position['updateTime'] <= timestamp_end_day:
+                positions_in_report.append(position)
+        page_num += 1
+        all_positions = get_history_positions(page_num=page_num, page_size=500)
 
     return positions_in_report
 
 
-def get_daily_pnl(days=0) -> float:
+def get_total_pnl(days=0) -> float:
     total_pnl = 0
     daily_positions = get_positions_per_day(days)
 
@@ -97,3 +100,5 @@ def get_daily_pnl(days=0) -> float:
 
 def get_positions_count(days=0)-> int:
     return len(get_positions_per_day(days))
+
+get_positions_per_day(30)
