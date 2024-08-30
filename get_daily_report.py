@@ -60,6 +60,7 @@ def get_positions_per_day(days) -> list:
             minute=0,
             second=0,
             microsecond=0).timestamp()) * 1000 - 86400000 * days
+    print(timestamp_start_day)
     if not days:
         timestamp_end_day = int(
             currentdate.replace(
@@ -100,3 +101,5 @@ def get_total_pnl(days=0) -> float:
 
 def get_positions_count(days=0)-> int:
     return len(get_positions_per_day(days))
+
+get_positions_per_day(0)

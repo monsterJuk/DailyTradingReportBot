@@ -86,7 +86,7 @@ async def get_custom_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return SELECT
 
 
-async  def handle_invalid_select_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_invalid_select_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
     invalid_select_text = "Press the button below to select a report type"
 
     await context.bot.send_message(
