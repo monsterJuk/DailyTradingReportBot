@@ -4,7 +4,6 @@ import time, datetime
 import json
 import hmac
 import hashlib
-from pprint import pprint
 
 BASE_URL = 'https://contract.mexc.com/'
 
@@ -59,8 +58,7 @@ def get_positions_per_day(days) -> list:
             hour=0,
             minute=0,
             second=0,
-            microsecond=0).timestamp()) * 1000 - 86400000 * days
-    print(timestamp_start_day)
+            microsecond=0).timestamp()) * 1000 - 86400000 * days - 7200000
     if not days:
         timestamp_end_day = int(
             currentdate.replace(
@@ -99,7 +97,5 @@ def get_total_pnl(days=0) -> float:
     return total_pnl.__round__(2)
 
 
-def get_positions_count(days=0)-> int:
+def get_positions_count(days=0) -> int:
     return len(get_positions_per_day(days))
-
-get_positions_per_day(0)
