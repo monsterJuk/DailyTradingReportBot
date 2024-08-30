@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/home/Python/DailyTradingReportBot/bin/ python
 
 """Bot for create and send tradings reports from MEXC.com"""
 
