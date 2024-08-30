@@ -100,5 +100,3 @@ def get_total_pnl(days=0) -> float:
 
 def get_positions_count(days=0)-> int:
     return len(get_positions_per_day(days))
-
-get_positions_per_day(30)
