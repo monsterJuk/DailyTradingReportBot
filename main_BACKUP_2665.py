@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+#!/home/Python/DailyTradingReportBot/bin/ python
+
+=======
+>>>>>>> 8e8abb7961ff43922de28fffb28185c436477f0b
+"""Bot for create and send tradings reports from MEXC.com"""
 
 import logging
 
@@ -5,7 +11,7 @@ from config import TOKEN
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, MessageHandler, \
     ContextTypes, CommandHandler, ConversationHandler, filters
-from get_daily_report_utc import get_total_pnl, get_positions_count
+from get_daily_report import get_total_pnl, get_positions_count
 
 # Enable logging
 logging.basicConfig(
