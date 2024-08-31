@@ -1,3 +1,4 @@
+""Bot for create and send tradings reports from MEXC.com"""
 
 import logging
 

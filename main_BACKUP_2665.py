@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+#!/home/Python/DailyTradingReportBot/bin/ python
+
+=======
+>>>>>>> 8e8abb7961ff43922de28fffb28185c436477f0b
+"""Bot for create and send tradings reports from MEXC.com"""
 
 import logging
 
