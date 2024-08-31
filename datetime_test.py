@@ -1,13 +1,20 @@
 import datetime
+from datetime import timezone
+
+d = datetime.date.today()
+t = datetime.datetime.min.time()
+t_max = datetime.datetime.max.time()
+
+cur_time = datetime.datetime.combine(d, t, tzinfo=timezone.utc)
+ts = int(cur_time.timestamp())
 
 currentdate = datetime.datetime.today()
-timestamp_start_cur_day = int(currentdate.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()) * 1000
-timestamp_end_cur_day = int(currentdate.replace(hour=23, minute=59, second=59, microsecond=999999).timestamp()) * 1000
-timestamp_start_prev_day = timestamp_start_cur_day - 86400000
-timestamp_end_prev_day = timestamp_end_cur_day - 86400000
+timestamp_start_day = int(
+    currentdate.replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0).timestamp())
 
-
-
-
-
-print(timestamp_end_cur_day)
+print(t_max)
+print(timestamp_start_day)
