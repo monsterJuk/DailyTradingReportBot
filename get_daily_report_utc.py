@@ -4,7 +4,6 @@ import datetime, time
 import json
 import hmac
 import hashlib
-from datetime import timezone
 
 BASE_URL = 'https://contract.mexc.com/'
 
@@ -14,8 +13,6 @@ def _get_server_time():
 
 
 def get_datetime_info(days=0):
-    #Time delta from UTC in microseconds
-    time_delta = 18000000
     #24 hours in microseconds
     day_duration = 86400000
 
@@ -28,8 +25,8 @@ def get_datetime_info(days=0):
             hour=0,
             minute=0,
             second=0,
-            microsecond=0).timestamp()) * 1000 \
-            - days * day_duration - time_delta
+            microsecond=0).timestamp()) * 1000\
+            - days * day_duration
 
     if not days:
         timestamp_end_day = int(
@@ -37,16 +34,15 @@ def get_datetime_info(days=0):
             hour=23,
             minute=59,
             second=59,
-            microsecond=999999).timestamp()) * 1000 \
-            - time_delta
+            microsecond=999999).timestamp()) * 1000
     else:
         timestamp_end_day = int(
             current_date.replace(
             hour=23,
             minute=59,
             second=59,
-            microsecond=999999).timestamp()) * 1000 \
-            - time_delta - day_duration
+            microsecond=999999).timestamp()) * 1000\
+            - day_duration
 
     result = {
         'current_datetime': current_date,

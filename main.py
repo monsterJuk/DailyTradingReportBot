@@ -42,9 +42,7 @@ async def get_daily_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
     number_of_positions = get_positions_count()
 
     daily_report_text = f"{total_pnl=}\n{number_of_positions=}\n\
-Current datetime: {datetime_info['current_datetime']}\n\
-Timestamp_start_day: {datetime_info['timestamp_start_day']}\n\
-Timestamp_end_day: {datetime_info['timestamp_end_day']}"
+Current datetime: {datetime_info['current_datetime']}"
 
     await context.bot.send_message(
         context._chat_id,
@@ -80,9 +78,7 @@ async def get_custom_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
     number_of_positions = get_positions_count(number_of_days)
 
     custom_report_text = f"{total_pnl=}\n{number_of_positions=}\n\
-    Current datetime: {datetime_info['current_datetime']}\n\
-    Timestamp_start_day: {datetime_info['timestamp_start_day']}\n\
-    Timestamp_end_day: {datetime_info['timestamp_end_day']}"
+    Current datetime: {datetime_info['current_datetime']}"
 
     await context.bot.send_message(
         context._chat_id,
