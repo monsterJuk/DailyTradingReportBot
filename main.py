@@ -1,12 +1,14 @@
 """Bot for create and send tradings reports from MEXC.com"""
 
 import logging
+import datetime
 
 from config import TOKEN
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, MessageHandler, \
     ContextTypes, CommandHandler, ConversationHandler, filters
-from get_daily_report_utc import get_total_pnl, get_positions_count
+from get_daily_report_utc import get_total_pnl, \
+    get_positions_count, get_datetime_info
 
 # Enable logging
 logging.basicConfig(
@@ -36,10 +38,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def get_daily_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    total_pnl = get_total_pnl(0)
-    number_of_positions = get_positions_count(0)
+    datetime_info = get_datetime_info()
+    total_pnl = get_total_pnl()
+    number_of_positions = get_positions_count()
 
-    daily_report_text = f"{total_pnl=}\n{number_of_positions=}"
+    daily_report_text = f"{total_pnl=}\n{number_of_positions=}\n\
+    Current datetime: {datetime_info['current_datetime']}\n\
+    Timestamp_start_day: {datetime_info['timestamp_start_day']}\n\
+    Timestamp_end_day: {datetime_info['timestamp_end_day']}"
 
     await context.bot.send_message(
         context._chat_id,
@@ -70,10 +76,14 @@ async def get_custom_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Please input number of days"
         )
 
+    datetime_info = get_datetime_info(number_of_days)
     total_pnl = get_total_pnl(number_of_days)
     number_of_positions = get_positions_count(number_of_days)
 
-    custom_report_text = f"{total_pnl=}\n{number_of_positions=}"
+    custom_report_text = f"{total_pnl=}\n{number_of_positions=}\n\
+    Current datetime: {datetime_info['current_datetime']}\n\
+    Timestamp_start_day: {datetime_info['timestamp_start_day']}\n\
+    Timestamp_end_day: {datetime_info['timestamp_end_day']}"
 
     await context.bot.send_message(
         context._chat_id,

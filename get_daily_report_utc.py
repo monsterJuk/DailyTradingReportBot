@@ -13,6 +13,50 @@ def _get_server_time():
     return int(time.time()*1000)
 
 
+def get_datetime_info(days=0):
+    #Time delta from UTC in microseconds
+    time_delta = 18000000
+    #24 hours in microseconds
+    day_duration = 86400000
+
+    current_date = datetime.datetime.today().replace(
+        microsecond=0
+    )
+
+    timestamp_start_day = int(
+        current_date.replace(
+            hour=0,
+            minute=0,
+            second=0,
+            microsecond=0).timestamp()) * 1000 \
+            - days * day_duration - time_delta
+
+    if not days:
+        timestamp_end_day = int(
+            current_date.replace(
+            hour=23,
+            minute=59,
+            second=59,
+            microsecond=999999).timestamp()) * 1000 \
+            - time_delta
+    else:
+        timestamp_end_day = int(
+            current_date.replace(
+            hour=23,
+            minute=59,
+            second=59,
+            microsecond=999999).timestamp()) * 1000 \
+            - time_delta - day_duration
+
+    result = {
+        'current_datetime': current_date,
+        'timestamp_start_day': timestamp_start_day,
+        'timestamp_end_day': timestamp_end_day
+    }
+
+    return result
+
+
 def _sign_v1(sign_params=None):
     if sign_params:
         sign = "%s%s%s" % (API_KEY, _get_server_time(), sign_params)
@@ -53,33 +97,15 @@ def get_history_positions(page_num: int, page_size=None, symbol=None) -> list:
 
 
 def get_positions_per_day(days) -> list:
-    current_date = datetime.date.today()
-    start_day_time = datetime.datetime.min.time()
-    end_day_time = datetime.datetime.max.time()
-    start_datetime = datetime.datetime.combine(
-        current_date,
-        start_day_time,
-        tzinfo=timezone.utc
-    )
-    end_datetime = datetime.datetime.combine(
-        current_date,
-        end_day_time,
-        tzinfo=timezone.utc
-    )
-
-    timestamp_start_day = int(start_datetime.timestamp() * 1000 - 86400000 * days - 18000000)
-
-    if not days:
-        timestamp_end_day = int(end_datetime.timestamp() * 1000 - 18000000)
-    else:
-        timestamp_end_day = int(end_datetime.timestamp() * 1000 - 18000000 - 86400000)
+    datetime_info = get_datetime_info(days)
 
     positions_in_report = []
     page_num = 1
     all_positions = get_history_positions(page_num=page_num, page_size=500)
     while all_positions:
         for position in all_positions:
-            if position['updateTime'] >= timestamp_start_day and position['updateTime'] <= timestamp_end_day:
+            if position['updateTime'] >= datetime_info['timestamp_start_day'] \
+                and position['updateTime'] <= datetime_info['timestamp_end_day']:
                 positions_in_report.append(position)
         page_num += 1
         all_positions = get_history_positions(page_num=page_num, page_size=500)
