@@ -1,7 +1,7 @@
 from config import API_KEY, SECRET_KEY
 import requests
-import datetime, time
-import json
+import datetime
+import time
 import hmac
 import hashlib
 
@@ -13,7 +13,7 @@ def _get_server_time():
 
 
 def get_datetime_info(days=0):
-    #24 hours in microseconds
+    # 24 hours in microseconds
     day_duration = 86400000
 
     current_date = datetime.datetime.today().replace(
@@ -58,8 +58,11 @@ def _sign_v1(sign_params=None):
         sign = "%s%s%s" % (API_KEY, _get_server_time(), sign_params)
     else:
         sign = "%s%s" % (API_KEY, _get_server_time())
-    sign = hmac.new(SECRET_KEY.encode('utf-8'), sign.encode('utf-8'),
-                      hashlib.sha256).hexdigest()
+    sign = hmac.new(
+        SECRET_KEY.encode('utf-8'),
+        sign.encode('utf-8'),
+        hashlib.sha256).hexdigest()
+
     return sign
 
 
@@ -100,8 +103,7 @@ def get_positions_per_day(days) -> list:
     all_positions = get_history_positions(page_num=page_num, page_size=500)
     while all_positions:
         for position in all_positions:
-            if position['updateTime'] >= datetime_info['timestamp_start_day'] \
-                and position['updateTime'] <= datetime_info['timestamp_end_day']:
+            if position['updateTime'] >= datetime_info['timestamp_start_day'] and position['updateTime'] <= datetime_info['timestamp_end_day']:
                 positions_in_report.append(position)
         page_num += 1
         all_positions = get_history_positions(page_num=page_num, page_size=500)

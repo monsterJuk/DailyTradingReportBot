@@ -1,8 +1,7 @@
 
 import logging
-import datetime
 
-from config import TOKEN
+from config import TOKEN, eligible_users
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, MessageHandler, \
     ContextTypes, CommandHandler, ConversationHandler, filters
@@ -26,14 +25,30 @@ main_keyboard = [['/daily_report', '/custom_report']]
 SELECT, CUSTOM_REPORT = range(2)
 
 welcome_text = "Select report type"
+not_eligible_text = "Sorry you are not eligible for using this bot"
+
+
+def check_user_eligibility(user_id) -> bool:
+    return True if user_id in eligible_users.values() else False
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if check_user_eligibility(context._user_id):
+        await context.bot.send_message(
+            context._chat_id,
+            welcome_text,
+            reply_markup=ReplyKeyboardMarkup(
+                main_keyboard,
+                resize_keyboard=True)
+        )
 
-    await context.bot.send_message(
-        context._chat_id,
-        welcome_text,
-        reply_markup=ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
+        return SELECT
+
+    else:
+        await context.bot.send_message(
+            context._chat_id,
+            not_eligible_text
+        )
 
 
 async def get_daily_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -52,19 +67,25 @@ Current datetime: {datetime_info['current_datetime']}"
     return SELECT
 
 
-async def custom_report_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def custom_report_handler(
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE) -> int:
     start_text = "Enter period (days)"
 
     await context.bot.send_message(
         context._chat_id,
         start_text,
-        reply_markup=ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
+        reply_markup=ReplyKeyboardMarkup(
+            main_keyboard,
+            resize_keyboard=True)
     )
 
     return CUSTOM_REPORT
 
 
-async def get_custom_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def get_custom_report(
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE):
     try:
         number_of_days = int(update.message.text)
     except ValueError:
@@ -83,31 +104,43 @@ async def get_custom_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         context._chat_id,
         custom_report_text,
-        reply_markup=ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
+        reply_markup=ReplyKeyboardMarkup(
+            main_keyboard,
+            resize_keyboard=True)
     )
 
     return SELECT
 
 
-async def handle_invalid_select_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_invalid_select_type(
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE):
+        
     invalid_select_text = "Press the button below to select a report type"
 
     await context.bot.send_message(
         context._chat_id,
         invalid_select_text,
-        reply_markup=ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
+        reply_markup=ReplyKeyboardMarkup(
+            main_keyboard,
+            resize_keyboard=True)
     )
 
     return SELECT
 
 
-async def handle_invalid_input_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_invalid_input_type(
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE):
+
     invalid_input_text = "Please input number of days"
 
     await context.bot.send_message(
         context._chat_id,
         invalid_input_text,
-        reply_markup=ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
+        reply_markup=ReplyKeyboardMarkup(
+            main_keyboard,
+            resize_keyboard=True)
     )
 
 
@@ -117,8 +150,7 @@ def main() -> None:
 
     conv_handler = ConversationHandler(
         entry_points=[
-            CommandHandler('custom_report', custom_report_handler),
-            CommandHandler('daily_report', get_daily_report)
+            CommandHandler('start', start)
         ],
         states={
             SELECT: [
@@ -134,7 +166,6 @@ def main() -> None:
         fallbacks=[]
     )
 
-    application.add_handler(CommandHandler('start', start))
     application.add_handler(conv_handler)
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
